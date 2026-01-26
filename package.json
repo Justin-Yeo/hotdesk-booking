@@ -1,0 +1,39 @@
+{
+  "name": "hotdesk-booking",
+  "version": "1.0.0",
+  "description": "A modern hot-desking management platform for flexible office spaces, enabling employees to reserve desks, track availability, and manage workspace resources efficiently.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Justin-Yeo/hotdesk-booking.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Justin-Yeo/hotdesk-booking/issues"
+  },
+  "homepage": "https://github.com/Justin-Yeo/hotdesk-booking#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^20.3.1",
+    "@commitlint/config-conventional": "^20.3.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
+  },
+  "lint-staged": {
+    "frontend/**/*.{ts,tsx,js,jsx}": [
+      "cd frontend && npm run lint:fix",
+      "cd frontend && npm run format"
+    ],
+    "frontend/**/*.{json,css,scss,md}": [
+      "cd frontend && npm run format"
+    ],
+    "backend/**/*.go": [
+      "cd backend && golangci-lint run --fix"
+    ]
+  }
+}
