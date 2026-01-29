@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -13,6 +15,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/justinyeo/hotdesk-booking/backend/internal/config"
+	"github.com/justinyeo/hotdesk-booking/backend/internal/database"
 	"github.com/justinyeo/hotdesk-booking/backend/internal/handlers"
 	customMiddleware "github.com/justinyeo/hotdesk-booking/backend/internal/middleware"
 )
@@ -32,6 +35,26 @@ func main() {
 		zap.String("environment", cfg.Environment),
 		zap.String("port", cfg.ServerPort),
 	)
+
+	// Initialize database connection pool
+	if cfg.DatabaseURL != "" {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		dbConfig := database.DefaultConfig(cfg.DatabaseURL)
+		_, err := database.Connect(ctx, dbConfig)
+		if err != nil {
+			logger.Warn("Failed to connect to database", zap.Error(err))
+		} else {
+			logger.Info("Database connection pool initialized",
+				zap.Int32("max_connections", dbConfig.MaxConnections),
+				zap.Int32("min_connections", dbConfig.MinConnections),
+			)
+			defer database.Close()
+		}
+	} else {
+		logger.Warn("DATABASE_URL not set, skipping database connection")
+	}
 
 	// Create Fiber app
 	app := fiber.New(fiber.Config{
