@@ -7,6 +7,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// Logger returns a middleware that logs HTTP requests using the provided logger
 func Logger(logger *zap.Logger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		start := time.Now()
